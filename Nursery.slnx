@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/examples/">
+    <Project Path="examples/EchoClient/EchoClient.csproj" />
+    <Project Path="examples/EchoServer/EchoServer.csproj" />
+    <Project Path="examples/HappyEyeballs/HappyEyeballs.csproj" />
+    <Project Path="examples/HelloWorld/HelloWorld.csproj" />
+  </Folder>
+  <Project Path="src/Nursery/Nursery.csproj" />
+</Solution>
