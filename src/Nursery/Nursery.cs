@@ -14,7 +14,7 @@ public sealed class Nursery(int capacity, CancellationToken cancellationToken)
 
   public Nursery()
       : this(capacity: 0, default) { }
-  
+
   public Nursery(Nursery parentNursery)
       : this(capacity: 0, parentNursery.CancelToken) { }
 
@@ -38,6 +38,8 @@ public sealed class Nursery(int capacity, CancellationToken cancellationToken)
   }
 
   public void StartSoon(Func<Task> action) => StartSoon(_ => action());
+
+  public Task Sleep(TimeSpan duration) => Task.Delay(duration, cts.Token);
 
   public async Task WaitAllAsync() {
     while (true) {
@@ -63,6 +65,27 @@ public sealed class Nursery(int capacity, CancellationToken cancellationToken)
   public void CancelAfter(TimeSpan timeout) => cts.CancelAfter(timeout);
 
   public void CancelAfter(int millisecondsDelay) => cts.CancelAfter(millisecondsDelay);
+
+  public static Nursery MoveOnAfter(TimeSpan timeout) {
+    var nursery = new Nursery();
+    nursery.CancelAfter(timeout);
+    return nursery;
+  }
+
+  public static Nursery MoveOnAfter(Nursery parnetNursery, TimeSpan timeout) {
+    var nursery = new Nursery(parnetNursery);
+    nursery.CancelAfter(timeout);
+    return nursery;
+  }
+
+  public static async Task FailAfter(TimeSpan timeout, Func<CancellationToken, Task> action) {
+    using var cts = new CancellationTokenSource(timeout);
+    try {
+      await action(cts.Token);
+    } catch (OperationCanceledException) when (cts.Token.IsCancellationRequested) {
+      throw new TimeoutException($"Operation timed out after {timeout}");
+    }
+  }
 
   public async ValueTask DisposeAsync() {
     try {

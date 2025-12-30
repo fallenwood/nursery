@@ -2,15 +2,15 @@
 using Nursery;
 
 await using (var nursery = Nursery.Nursery.MoveOnAfter(TimeSpan.FromSeconds(3))) {
-  nursery.StartSoon(async token => {
+  nursery.StartSoon(async _ => {
     Console.WriteLine("  task1: started! sleeping for 5 seconds...");
-    await NurseryExtensions.Sleep(TimeSpan.FromSeconds(5), token);
+    await nursery.Sleep(TimeSpan.FromSeconds(5));
     Console.WriteLine("  task1: exiting!");
   });
 
-  nursery.StartSoon(async token => {
+  nursery.StartSoon(async _ => {
     Console.WriteLine("  task2: started! sleeping for 2 seconds...");
-    await NurseryExtensions.Sleep(TimeSpan.FromSeconds(2), token);
+    await nursery.Sleep(TimeSpan.FromSeconds(2));
     Console.WriteLine("  task2: exiting!");
   });
 }
