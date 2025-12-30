@@ -6,14 +6,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-public sealed class Nursery(int capacity)
+public sealed class Nursery(int capacity, CancellationToken cancellationToken)
     : IAsyncDisposable {
   private readonly List<Task> tasks = new(capacity: capacity);
-  private readonly CancellationTokenSource cts = new();
+  private readonly CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
   private readonly Lock @lock = new();
 
   public Nursery()
-      : this(capacity: 0) { }
+      : this(capacity: 0, default) { }
+  
+  public Nursery(Nursery parentNursery)
+      : this(capacity: 0, parentNursery.CancelToken) { }
 
   public CancellationToken CancelToken => cts.Token;
 
@@ -22,6 +25,7 @@ public sealed class Nursery(int capacity)
       var task = Task.Run(async () => {
         try {
           await action(cts.Token);
+        } catch (TaskCanceledException) {
         } catch (OperationCanceledException) {
         } catch (Exception) {
           cts.Cancel();
