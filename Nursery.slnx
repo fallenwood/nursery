@@ -1,9 +1,12 @@
 <Solution>
   <Folder Name="/examples/">
+    <Project Path="examples/Cancellation/Cancellation.csproj" />
     <Project Path="examples/EchoClient/EchoClient.csproj" />
     <Project Path="examples/EchoServer/EchoServer.csproj" />
+    <Project Path="examples/ExceptionHandling/ExceptionHandling.csproj" />
     <Project Path="examples/HappyEyeballs/HappyEyeballs.csproj" />
     <Project Path="examples/HelloWorld/HelloWorld.csproj" />
+    <Project Path="examples/MoveOnAfter/MoveOnAfter.csproj" />
   </Folder>
   <Project Path="src/Nursery/Nursery.csproj" />
 </Solution>
